@@ -1,0 +1,27 @@
+# Output kompilasi dan direktori build
+/build/
+*.o
+*.out
+
+# File binary executable
+/server
+
+# File keamanan rahasia (JANGAN PERNAH DI-UPLOAD KE GITHUB)
+*.pem
+*.key
+*.crt
+
+# Folder dan file sistem OS (Mac/Linux/Windows)
+.DS_Store
+Thumbs.db
+*.swp
+
+# Konfigurasi Editor (VSCode, IntelliJ, CLion, dll)
+.vscode/
+.idea/
+*.suo
+*.user
+
+# File log/cache temporary
+*.log
+/tmp/

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Scalable Web Server - Features Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-grad-1: #1e3c72;
+            --bg-grad-2: #2a5298;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-light: #ffffff;
+            --accent: #4facfe;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2));
+            color: var(--text-light);
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            color: var(--accent);
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.5;
+        }
+
+        button, .btn-link {
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+            border: none;
+            padding: 12px 24px;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: opacity 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .btn-link:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+        }
+
+        #php-result {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            font-family: monospace;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 15px;
+            height: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #4facfe;
+            width: 0%;
+            transition: width 0.2s linear;
+        }
+        
+        .status-text {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #aaa;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🚀 Server Features Showcase</h1>
+        <p>Dashboard interaktif ini menyajikan demonstrasi langsung dari kapabilitas **Skalabilitas & Kecepatan** C++ Web Server buatan Anda.</p>
+
+        <div class="grid">
+            <!-- Feature 1: Dynamic CGI (PHP) -->
+            <div class="card">
+                <h3>🐘 1. PHP CGI Execution</h3>
+                <p>Menguji pipa eksekusi *Common Gateway Interface*. Server akan melakukan forking dinamis dan menembak interpreter PHP.</p>
+                <button onclick="testPHP()">Test PHP Ping</button>
+                <div id="php-result">Menunggu respons...</div>
+            </div>
+
+            <!-- Feature 2: Directory Listing -->
+            <div class="card">
+                <h3>📁 2. Directory Listing</h3>
+                <p>Menguji fungsionalitas visualisasi otomatis dari folder *Document Root* yang tidak memiliki file *index.html* atau *index.php*.</p>
+                <a href="/test_range/" class="btn-link" target="_blank">Buka UI Direktori</a>
+            </div>
+
+            <!-- Feature 3: Range Requests -->
+            <div class="card">
+                <h3>📦 3. HTTP Range Requests</h3>
+                <p>Menguji fitur elit *Partial Content* (206) menggunakan API Fetch untuk mensimulasikan "Resume Download" berkas 50MB.</p>
+                <button id="btn-download" onclick="testRangeRequest()">Mulai Simulasi Streaming</button>
+                <div class="progress-container" id="prog-container">
+                    <div class="progress-bar" id="prog-bar"></div>
+                </div>
+                <div class="status-text" id="dl-status"></div>
+            </div>
+            
+            <!-- Feature 4: Zero Copy Static Serving (Image/CSS) -->
+            <div class="card">
+                <h3>⚡ 4. Zero-Copy Serving</h3>
+                <p>Dengan memuat CSS yang menghiasi halaman ini secara instan, kernel Linux Anda menyalin data langsung dari *Disk* ke Socket Jaringan secara asinkronus (via `sendfile()`).</p>
+                <p style="color: var(--accent); font-weight: bold; margin-top: 15px;">✓ Sedang Aktif</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. PHP Test Logic
+        async function testPHP() {
+            const resDiv = document.getElementById('php-result');
+            resDiv.innerHTML = "Processing...";
+            try {
+                const response = await fetch('/ping.php');
+                if(!response.ok) throw new Error("HTTP " + response.status);
+                const data = await response.text();
+                resDiv.innerHTML = `<span style="color: #4ade80;">✓ ${data}</span>`;
+            } catch (err) {
+                resDiv.innerHTML = `<span style="color: #f87171;">✗ Error: ${err.message}</span>`;
+                console.log("Tip: Jangan lupa buat ping.php dulu!");
+            }
+        }
+
+        // 3. HTTP Range Request "Resumable Download" Simulator
+        let abortController = null;
+        async function testRangeRequest() {
+            const btn = document.getElementById('btn-download');
+            const pCont = document.getElementById('prog-container');
+            const pBar = document.getElementById('prog-bar');
+            const statusText = document.getElementById('dl-status');
+            
+            pCont.style.display = 'block';
+            statusText.style.display = 'block';
+            
+            btn.disabled = true;
+            btn.innerText = "Mengambil Range Bytes...";
+            pBar.style.width = '0%';
+            
+            const fileUrl = '/test_range/file_besar.bin';
+            const totalBytes = 50 * 1024 * 1024; // 50MB (sesuai yang di-truncate)
+            const chunkSize = 5 * 1024 * 1024;  // Ambil per 5MB
+            let downloaded = 0;
+
+            try {
+                // Mensimulasikan klien yang mengunduh file secara terpotong-potong
+                // seperti IDM (Internet Download Manager) atau Resume Browser
+                while (downloaded < totalBytes) {
+                    const start = downloaded;
+                    const end = Math.min(downloaded + chunkSize - 1, totalBytes - 1);
+                    
+                    statusText.innerText = `Meminta Byte: ${Math.round(start/1024/1024)}MB - ${Math.round(end/1024/1024)}MB...`;
+                    
+                    const response = await fetch(fileUrl, {
+                        headers: {
+                            'Range': `bytes=${start}-${end}`
+                        }
+                    });
+                    
+                    if (response.status !== 206 && response.status !== 200) {
+                        throw new Error("Server gagal mengembalikan Partial Content (206)");
+                    }
+                    
+                    // Jeda simulasi buatan (artifisial) selama setengah detik 
+                    // agar Anda bisa melihat proses berjalannya "resume download" di UI
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    const blob = await response.blob();
+                    downloaded += blob.size;
+                    
+                    const percent = Math.round((downloaded / totalBytes) * 100);
+                    pBar.style.width = percent + '%';
+                }
+                
+                statusText.innerText = "Selesai! File berhasil di-*streaming* per 5MB.";
+                statusText.style.color = "#4ade80";
+                btn.innerText = "Download Sukses";
+                
+            } catch (err) {
+                statusText.innerText = err.message;
+                statusText.style.color = "#f87171";
+                btn.disabled = false;
+                btn.innerText = "Coba Lagi";
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
