@@ -5,6 +5,8 @@
 
 # File binary executable
 /server
+/server_gui
+safa-web-server_*/
 
 # File keamanan rahasia (JANGAN PERNAH DI-UPLOAD KE GITHUB)
 *.pem
@@ -25,3 +27,4 @@ Thumbs.db
 # File log/cache temporary
 *.log
 /tmp/
+.cache/

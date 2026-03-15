@@ -57,7 +57,7 @@ Server::Server(int port, const std::string &doc_root, int num_threads,
                const std::string &cert_file, const std::string &key_file)
     : port(port), doc_root(doc_root), num_threads(num_threads), server_fd(-1),
       epoll_fd(-1), pool(num_threads), cert_file(cert_file), key_file(key_file),
-      ssl_ctx(nullptr), is_https(!cert_file.empty() && !key_file.empty()) {
+      ssl_ctx(nullptr), is_https(!cert_file.empty() && !key_file.empty()), is_running(false) {
 
   // Apabila Kunci Keamanan HTTPS ada di parameter CLI, Siapkan Tembok SSLnya.
   if (is_https) {
@@ -152,12 +152,12 @@ void Server::start() {
 
   // SIKLUS DETAK JANTUNG TAK BERAKHIR (Infinity Event Loop)
   struct epoll_event events[64]; // Siapkan lembar catatan yg menampung max 64 lapor cctv dalam 1 nafas.
-  while (true) {
+  is_running = true;
+  while (is_running) {
     
     // epoll_wait: BIKIN CPU JADI 0% PENGGUNAANYA alias TIDUR NGOROK sampai 
-    // Ada laporan yg dikirim System Call Epoll Linux Kernel.
-    // Jika lapor, "nfds" akan bernilai sebesar jumlah event bergetar.
-    int nfds = epoll_wait(epoll_fd, events, 64, -1);
+    // Ada laporan yg dikirim System Call Epoll Linux Kernel, ATAU Timeout setiap 1000 md (1 detik).
+    int nfds = epoll_wait(epoll_fd, events, 64, 1000);
     
     for (int i = 0; i < nfds; ++i) {
       if (events[i].data.fd == server_fd) {
@@ -201,6 +201,15 @@ void Server::start() {
       }
     }
   }
+
+  // Bersihkan resource saat loop selesai (penting agar port bisa di-reuse!)
+  Logger::log("Server dihentikan.");
+  if (epoll_fd != -1) { close(epoll_fd); epoll_fd = -1; }
+  if (server_fd != -1) { close(server_fd); server_fd = -1; }
+}
+
+void Server::stop() {
+  is_running = false;
 }
 
 // ----------------------------------------------------

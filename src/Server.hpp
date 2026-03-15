@@ -6,6 +6,7 @@
 #include "ThreadPool.hpp"
 #include <openssl/ssl.h>
 #include <string>
+#include <atomic>
 
 /**
  * @class Server
@@ -30,6 +31,11 @@ public:
    * @brief Memulai "Infinity Loop" Utama Tanpa Henti Melayani Klien TCP.
    */
   void start();
+
+  /**
+   * @brief Memberhentikan siklus event loop secara aman dari luar thread
+   */
+  void stop();
 
 private:
   /**
@@ -80,6 +86,7 @@ private:
   int server_fd;        // Penampung File Descriptor Tuan Rumah (Main Socket)
   int epoll_fd;         // Penampung Cermin Interupsi File Descriptor Epoll Kernel
   ThreadPool pool;      // Tempat Pekerja Duduk Tunggu Orderan Masuk
+  std::atomic<bool> is_running; // Indikator Status Hidup Mesin Server
 
   // Variabel Pilihan jika SSL HTTPS Dipilih Aktif
   std::string cert_file;

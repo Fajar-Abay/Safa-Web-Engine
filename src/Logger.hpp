@@ -3,6 +3,7 @@
 
 #include <mutex>
 #include <string>
+#include <vector>
 
 /**
  * @class Logger
@@ -24,7 +25,16 @@ public:
    */
   static void error(const std::string &msg);
 
+  /**
+   * @brief Membaca cuplikan riwayat Log yang baru dicetak
+   * @param limit Batas maksimum baris (misal 50 terakhir)
+   * @return std::vector dari string text line logs
+   */
+  static std::vector<std::string> get_recent_logs(size_t limit = 100);
+
 private:
+  static std::vector<std::string> logs_buffer;
+
   // Mutex raksasa global (Semaphore pintu masuk printout terminal standard OS)
   // Tidak peduli jika 10 koneksi terhubung dan nyala paralel mendadak bersamaan dan mencoba di-log,
   // mutex menjamin cuma antri SATU persatu agar baris teks output printah layar tidak berantakan hancur tumpah-tindih.

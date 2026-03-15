@@ -10,6 +10,9 @@ find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 
+# ================= SFML GUI =================
+find_package(SFML 2.5 COMPONENTS graphics window system)
+
 add_executable(server 
     src/main.cpp
     src/Server.cpp
@@ -18,3 +21,17 @@ add_executable(server
 )
 
 target_link_libraries(server PRIVATE Threads::Threads OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
+
+if(SFML_FOUND)
+    add_executable(server_gui 
+        src/gui_main.cpp
+        src/Server.cpp
+        src/Logger.cpp
+        src/Utils.cpp
+    )
+    target_link_libraries(server_gui PRIVATE 
+        Threads::Threads OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB 
+        sfml-graphics sfml-window sfml-system
+    )
+    message(STATUS "Membangun dengan Modul Antarmuka SFML Desktop GUI!")
+endif()
